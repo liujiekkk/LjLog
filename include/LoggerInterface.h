@@ -8,6 +8,7 @@ namespace ljLog {
 
 	// 设置日志错误等级
 	enum LogLevel {
+		E_NONE = 0B00000000,
 		E_DEBUG = 0B00000001,
 		E_INFO = 0B00000010,
 		E_NOTICE = 0B00000100,
@@ -23,8 +24,6 @@ namespace ljLog {
 
 	public:
 
-		LoggerInterface(const std::string&, std::ostream&);
-
 		virtual ~LoggerInterface() {}
 
 		static void setLevel(unsigned);
@@ -37,6 +36,8 @@ namespace ljLog {
 	protected:
 
 		typedef std::chrono::system_clock::time_point TimePoint;
+
+		LoggerInterface(const std::string&, std::ostream&);
 
 		const std::string& getStr(LogLevel);
 
@@ -82,6 +83,10 @@ namespace ljLog {
 		}
 		// 查找占位符的位置.
 		size_t pos = format.find(m_placeholderArgs);
+		// 如果找不到替换占位符直接结束.
+		if (pos == std::string::npos) {
+			return;
+		}
 		// 替换占位符为参数内容.
 		format.replace(pos, m_placeholderArgs.size(), first);
 		// 递归替换各个参数.
